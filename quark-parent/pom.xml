@@ -24,6 +24,9 @@
         <nekohtml.version>1.9.22</nekohtml.version>
         <fasterxml.version>2.8.0</fasterxml.version>
         <springfox.version>2.2.2</springfox.version>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
