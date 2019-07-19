@@ -3,6 +3,7 @@ package com.quark.common.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.quark.common.utils.Constants;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -86,6 +87,9 @@ public class User implements Serializable {
     }
 
     public String getSignature() {
+        if(StringUtils.isEmpty(signature)) {
+            signature = "";
+        }
         return signature;
     }
 
