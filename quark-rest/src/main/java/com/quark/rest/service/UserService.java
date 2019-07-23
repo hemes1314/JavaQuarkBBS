@@ -53,6 +53,7 @@ public interface UserService extends BaseService<User> {
      */
     String LoginUser(User user);
 
+    String LoginUserUUMS(User user);
 
     /**
      * 通过Token获取用户信息

@@ -1,19 +1,26 @@
 package com.quark.rest.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.quark.common.base.BaseServiceImpl;
 import com.quark.common.dao.UserDao;
+import com.quark.common.entity.UUMSResponse;
 import com.quark.common.entity.User;
 import com.quark.common.exception.ServiceProcessException;
 import com.quark.rest.service.RedisService;
 import com.quark.rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,6 +36,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserDao, User> implements U
     @Autowired
     private RedisService<User> redisService;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Value("${REDIS_USERID_KEY}")
     private String REDIS_USERID_KEY;
 
@@ -37,6 +47,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserDao, User> implements U
 
     @Value("${REDIS_USER_TIME}")
     private Integer REDIS_USER_TIME;
+
+    private String uumsContextPath = "http://uums.aps.com:31019/uums";
 
     @Override
     public boolean checkUserName(String username) {
@@ -73,6 +85,26 @@ public class UserServiceImpl extends BaseServiceImpl<UserDao, User> implements U
         redisService.cacheString(REDIS_USER_KEY + token, user, REDIS_USER_TIME);
         redisSocketService.cacheSet(REDIS_USERID_KEY,user.getId());
 //        loginId.add(user.getId());//维护一个登录用户的set
+        return token;
+    }
+
+    @Override
+    public String LoginUserUUMS(User user) {
+        Map<String, String> uumsLoginParams = new HashMap<>();
+        uumsLoginParams.put("name", user.getUsername());
+        uumsLoginParams.put("password", user.getPassword());
+        MultiValueMap multiMap = new LinkedMultiValueMap();
+        multiMap.setAll(uumsLoginParams);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(multiMap, httpHeaders);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(uumsContextPath, httpEntity, String.class);
+        String result = responseEntity.getBody();
+        UUMSResponse uumsResponse = JSON.parseObject(result, UUMSResponse.class);
+
+        String token = UUID.randomUUID().toString();
+        redisService.cacheString(REDIS_USER_KEY + token, user, REDIS_USER_TIME);
+        redisSocketService.cacheSet(REDIS_USERID_KEY,user.getId());
         return token;
     }
 

@@ -80,6 +80,22 @@ public class UserController extends BaseController {
         return result;
     }
 
+    @PostMapping("/login/uums")
+    public QuarkResult LoginUUMS(String username,String password) {
+
+        if(username == null || password == null) {
+            return QuarkResult.warn("请输入用户名密码");
+        }
+        QuarkResult result = restProcessor(() -> {
+            User loginUser = new User();
+            loginUser.setUsername(username);
+            loginUser.setPassword(password);
+            String token = userService.LoginUserUUMS(loginUser);
+            return QuarkResult.ok(token);
+        });
+        return result;
+    }
+
     @ApiOperation("根据Token获取用户的信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "发送给用户的唯一令牌",dataType = "String"),
