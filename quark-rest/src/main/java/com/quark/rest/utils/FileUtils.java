@@ -24,6 +24,7 @@ public class FileUtils {
             if (!file_dir.exists()) file_dir.mkdirs();
 
             BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(Constants.UPLOAD_PATH + userUploadPath + fileName)));
+            System.out.println("upload file:"+Constants.UPLOAD_PATH + userUploadPath + fileName);
             stream.write(file.getBytes());
             stream.close();
 

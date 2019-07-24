@@ -31,7 +31,7 @@ public class UploadController {
         if (!file.isEmpty()) {
             try {
                 String s = FileUtils.uploadFile(file);
-              result = new UploadResult(0, new UploadResult.Data(s));
+                result = new UploadResult(0, new UploadResult.Data(s));
                 return result;
             } catch (IOException e) {
                 e.printStackTrace();
