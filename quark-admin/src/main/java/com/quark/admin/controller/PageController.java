@@ -60,6 +60,11 @@ public class PageController {
         }
     }
 
+    @RequestMapping("/")
+    public String defaultPage(){
+        return "init";
+    }
+
     @RequestMapping("/initPage")
     public String InitPage(){
         return "init";
