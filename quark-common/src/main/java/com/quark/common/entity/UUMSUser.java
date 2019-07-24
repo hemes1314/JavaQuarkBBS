@@ -27,5 +27,7 @@ public class UUMSUser {
     private String name;
     private String nickName;
     private boolean setExpireNull;
-    
+    private int source;
+    private int status;
+    private String updateTime;
 }
