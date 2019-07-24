@@ -60,6 +60,7 @@
 <script>
 $(document).ready(function(){
     //添加option
+    $.ajaxSettings.async = false;
     $.get(quark_label_getall_api, function (data) {
         var htm = "";
         if (data.status == 200) {
